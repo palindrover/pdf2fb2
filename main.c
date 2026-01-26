@@ -40,8 +40,9 @@ int main(int argc, char *argv[])
 	}
 
 	//reading metadata
-	
-
+	const char *author = pdfioFileGetAuthor(pdf);
+	char *title = argv[1];
+	title[SIZEOF(title)-4] = '\0';
 
 	//writing metadata
 	fprintf(output, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -68,7 +69,6 @@ int main(int argc, char *argv[])
 
 		}
 	}
-
 
 	fclose(output);
 
