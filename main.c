@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
 	//writing metadata
 	fprintf(output, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	fprintf(output, "<FictionBook>\n<description>\n\t<title-info>\n");	
-	
-
+	fprintf(output, "\t\t<genre></genre>\n\t\t<author>%s</author>\n", author);
+	fprintf(output, "\t\t<book-title>%s</book-title>\n\t</title-info>\n</description>\n", title);
 
 	//reading pdf
 	pdfio_obj_t *page;
