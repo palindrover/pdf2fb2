@@ -1,4 +1,6 @@
 #include <pdfio.h>
+#include <ctype.h>
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,20 +29,14 @@ int main(int argc, char *argv[])
 	char *outputName;
 	if(argc < 3)
 	{
-		outputName = (char*)calloc(len(filename), sizeof(char));
-		strcpy(outputName, filename);
+		outputName = argv[1];
 		outputName[len(argv[1])-2] = '2';
 		outputName[len(argv[1])-3] = 'b';
 		outputName[len(argv[1])-4] = 'f';
 	}
-	else 
-	{
-		outputName = (char*)calloc(len(argv[2]), sizeof(char));
-		strcpy(outputName, argv[2]);
-	}
+	else strcpy(outputName, argv[2]);
 
 	FILE *output = fopen(outputName, "w");
-	free(outputName);
 
 	if(output == NULL)
 	{
@@ -50,8 +46,7 @@ int main(int argc, char *argv[])
 
 	//reading metadata
 	const char *author = pdfioFileGetAuthor(pdf);
-	char *title = (char*)calloc(len(argv[1]), sizeof(char));
-	strcpy(title, argv[1]);
+	char *title = argv[1];
 	title[len(argv[1])-5] = '\0';
 
 	//writing metadata
@@ -60,16 +55,15 @@ int main(int argc, char *argv[])
 	fprintf(output, "\t\t<genre></genre>\n\t\t<author>%s</author>\n", author);
 	fprintf(output, "\t\t<book-title>%s</book-title>\n\t</title-info>\n</description>\n", title);
 
-	free(title);
-
 	//reading pdf
 	pdfio_obj_t *page;
 	pdfio_stream_t *stream;
-	char buffer[1024];
+	char buffer[1024], *bufptr, font[256];
 	bool in = 0, first = 1;
 	int encoding[256];
 
-	/*
+	fprintf(output, "<body>\n");	
+
 	for(size_t i = 0, numPages = pdfioFileGetNumPages(pdf); i < numPages; i++)
 	{
 		page = pdfioFileGetPage(pdf, i);
@@ -78,11 +72,24 @@ int main(int argc, char *argv[])
 		{
 			if(!strcmp(buffer, "[")) in = 1;
 			else if(!strcmp(buffer, "]")) in = 0;
-
+			else if(!first && in && (isdigit(buffer[0]) || buffer[0] == '-') && fabs(atof(buffer)) > 100) putchar(' ');
+			else if(buffer[0] == '(')
+			{
+				first = 0;
+				for(bufptr = buffer + 1; *bufptr; bufptr++) put_utf8(encoding[*bufptr & 255]);
+			}
+			else if(buffer[0] == '<')
+			{
+				first = 0;
+				puts_utf16(buffer + 1);
+			}
+			else if(buffer[0] == '/')
+			{
+			}
 
 		}
 	}
-*/
+
 	fclose(output);
 	
 	pdfioFileClose(pdf);
