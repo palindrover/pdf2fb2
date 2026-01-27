@@ -1,13 +1,13 @@
 #ifndef NAME_MAP_H
 #define NAME_MAP_H
 
-typedef struct name_map_s
+typedef struct name_map
 {
 	const char *name;
 	int unicode;
-} name_map_t;
+} name_map;
 
-static name_map_t unicode_map[] = 
+static name_map unicode_map[] = 
 {
   { "A",		0x0041 },
   { "AE",		0x00c6 },
